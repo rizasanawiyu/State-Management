@@ -1,14 +1,27 @@
+import { useRecoilState } from "recoil";
 import { useNavigate } from "react-router-dom";
-import { useTodoItem } from "../contexts/ToDoItemContext";
-import { useVote } from "../contexts/VoteContext";
+import { voteState, todoItemState } from "../recoil/atoms";
 
 export default function Home(){
-    const {todos, setSelectedToDo} = useTodoItem()
-    const {currentUser, setCurrentUser, votes, addVote} = useVote()
+    const [vote, setVote] = useRecoilState(voteState)
+    const [todoData, setTodoData] = useRecoilState(todoItemState)
     const navigate = useNavigate();
 
+    function addVote(todoId){
+        setVote((prev) => ({
+        ...prev,
+            votes: {
+                ...prev.votes,
+                [todoId]: prev.votes[todoId] + 1,
+            }
+        }));
+    }
+
     function openDetail(todo){
-        setSelectedToDo(todo);
+        setTodoData((prev) => ({
+            ...prev,
+            selectedTodo: todo
+        }));
         navigate('/detail')
     }
     return (
@@ -19,17 +32,22 @@ export default function Home(){
 
             <select
                 id="user"
-                value={currentUser}
-                onChange={(e) => setCurrentUser(e.target.value)}
+                value={vote.currentUser}
+                onChange={(e) => 
+                    setVote((prev) => ({
+                        ...prev, 
+                        currentUser:e.target.value
+                    }))
+                }
             >
                 <option value="Budi">Budi</option>
                 <option value="Bidu">Bidu</option>
                 <option value="Bobo">Bobo</option>
             </select>
 
-            <p>User aktif: {currentUser}</p>
+            <p>User aktif: {vote.currentUser}</p>
 
-            {todos.map((todo) => (
+            {todoData.todos.map((todo) => (
                 <div
                 key={todo.id}
                 style={{
@@ -46,7 +64,7 @@ export default function Home(){
                     {todo.title}
                 </h3>
 
-                <p>Vote: {votes[todo.id]}</p>
+                <p>Vote: {vote.votes[todo.id]}</p>
 
                 <button onClick={() => addVote(todo.id)}>
                     Vote
