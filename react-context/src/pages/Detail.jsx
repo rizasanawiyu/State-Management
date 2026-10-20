@@ -1,13 +1,16 @@
-
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useTodoItem } from "../contexts/ToDoItemContext";
-import { useVote } from "../contexts/VoteContext";
 
 export default function Detail() {
-  const { selectedTodo } = useTodoItem();
-  const { votes } = useVote();
-
   const navigate = useNavigate();
+
+  const selectedTodo = useSelector(
+    (state) => state.todoItem.selectedTodo
+  )
+
+  const votes = useSelector(
+    (state) => state.vote.votes
+  )
 
   if (!selectedTodo) {
     return (

@@ -1,14 +1,22 @@
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from "react-router-dom";
-import { useTodoItem } from "../contexts/ToDoItemContext";
-import { useVote } from "../contexts/VoteContext";
+import { selectedTodo } from "../features/todoItem/todoItemSlice";
+import { addVote, setCurrentUser } from "../features/vote/voteSlice";
 
 export default function Home(){
-    const {todos, setSelectedToDo} = useTodoItem()
-    const {currentUser, setCurrentUser, votes, addVote} = useVote()
+    const dispatch = useDispatch();
     const navigate = useNavigate();
 
+    const { todos } = useSelector(
+        (state) => state.todoItem
+    )
+
+    const { currentUser, votes } = useSelector(
+        (state) => state.vote
+    )
+
     function openDetail(todo){
-        setSelectedToDo(todo);
+        dispatch(selectedTodo(todo));
         navigate('/detail')
     }
     return (
@@ -20,7 +28,7 @@ export default function Home(){
             <select
                 id="user"
                 value={currentUser}
-                onChange={(e) => setCurrentUser(e.target.value)}
+                onChange={(e) => dispatch(setCurrentUser(e.target.value))}
             >
                 <option value="Budi">Budi</option>
                 <option value="Bidu">Bidu</option>
@@ -48,7 +56,7 @@ export default function Home(){
 
                 <p>Vote: {votes[todo.id]}</p>
 
-                <button onClick={() => addVote(todo.id)}>
+                <button onClick={() => dispatch(addVote(todo.id))}>
                     Vote
                 </button>
             </div>
