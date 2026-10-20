@@ -1,14 +1,29 @@
+import { useAppStore } from "../store/store";
 import { useNavigate } from "react-router-dom";
-import { useTodoItem } from "../contexts/ToDoItemContext";
-import { useVote } from "../contexts/VoteContext";
 
 export default function Home(){
-    const {todos, setSelectedToDo} = useTodoItem()
-    const {currentUser, setCurrentUser, votes, addVote} = useVote()
+    const todos = useAppStore((state) => state.todos)
+    const votes = useAppStore((state) => state.votes)
+    const currentUser = useAppStore(
+        (state) => state.currentUser
+    );
+
+    const setCurrentUser = useAppStore(
+        (state) => state.setCurrentUser
+    );
+
+    const addVote = useAppStore(
+        (state) => state.addVote
+    );
+
+    const selectTodo = useAppStore(
+        (state) => state.selectTodo
+    )
+
     const navigate = useNavigate();
 
     function openDetail(todo){
-        setSelectedToDo(todo);
+        selectTodo(todo);
         navigate('/detail')
     }
     return (
